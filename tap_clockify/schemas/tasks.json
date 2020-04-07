@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "string"},
+    "projectId": {"type": "string"},
+    "assigneeId": {"type": ["null", "string"]},
+    "name": {"type": "string"},
+    "duration": {"type": "string"},
+    "estimate": {"type": "string"},
+    "status": {"type": "string"},
+    "assigneeIds": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

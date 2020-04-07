@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "imageUrl": {"type": "string"},
+    "hourlyRate": {
+      "amount": {"type": "integer"},
+      "currency": {"type": "string"}
+    },
+    "workspaceSettings": {
+      "type": "object",
+      "properties": {
+        "adminOnlyPages": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "automaticLock": {
+          "type": ["null", "object"],
+          "properties": {
+            "changeDay": {"type": "string"},
+            "dayOfMonth": {"type": "integer"},
+            "firstDay": {"type": "string"},
+            "olderThanPeriod": {"type": "string"},
+            "olderThanValue": {"type": "integer"},
+            "type": {"type": "string"}
+          }
+        },
+        "canSeeTimeSheet": {"type": "boolean"},
+        "canSeeTimeTracker": {"type": "boolean"},
+        "defaultBillableProjects": {"type": "boolean"},
+        "forceDescription": {"type": "boolean"},
+        "forceProjects": {"type": "boolean"},
+        "forceTags": {"type": "boolean"},
+        "forceTasks": {"type": "boolean"},
+        "lockTimeEntries": {"type": ["null", "string"]},
+        "onlyAdminsCreateProject": {"type": "boolean"},
+        "onlyAdminsCreateTag": {"type": "boolean"},
+        "onlyAdminsSeeAllTimeEntries": {"type": "boolean"},
+        "onlyAdminsSeeBillableRates": {"type": "boolean"},
+        "onlyAdminsSeeDashboard": {"type": "boolean"},
+        "onlyAdminsSeePublicProjectsEntries": {"type": "boolean"},
+        "projectFavorites": {"type": "boolean"},
+        "projectGroupingLabel": {"type": "string"},
+        "projectPickerSpecialFilter": {"type": "boolean"},
+        "round": {
+          "type": "object",
+          "properties": {
+            "minutes": {"type": "string"},
+            "round": {"type": "string"}  
+          }
+        },
+        "timeRoundingInReports": {"type": "boolean"},
+        "trackTimeDownToSecond": {"type": "boolean"}
+      }
+    }
+  }
+}

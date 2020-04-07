@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "profilePicture": {
+      "type": "string"
+    },
+    "activeWorkspace": {
+      "type": "string"
+    },
+    "defaultWorkspace": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "memberships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "hourlyRate": {
+            "type": ["null", "object"],
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              }
+            }
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "membershipType": {
+            "type": "string"
+          },
+          "membershipStatus": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

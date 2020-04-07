@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "workspaceId": {"type": "string"},
+    "archived": {"type": "boolean"}
+  }
+}

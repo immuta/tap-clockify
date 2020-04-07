@@ -1,0 +1,5 @@
+backoff
+pytz
+requests
+singer-python
+tap-framework
