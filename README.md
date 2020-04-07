@@ -6,6 +6,7 @@ This is a [Singer](http://singer.io) tap that produces JSON-formatted data follo
 
 It can generate a catalog of available data in Clockify and extract the following resources:
 
+- clients
 - projects
 - tags
 - tasks
