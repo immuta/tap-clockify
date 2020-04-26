@@ -19,7 +19,7 @@ class ClockifyClient:
             method,
             url,
             headers={
-                'x-api-key': self.config["api-key"],
+                'x-api-key': self.config["api_key"],
                 'Content-Type': 'application/json'
             },
             params=params,
