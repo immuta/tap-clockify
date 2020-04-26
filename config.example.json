@@ -1,5 +1,5 @@
 {
-  "api-key": "string",
+  "api_key": "string",
   "workspace": "string",
   "start_date": "2020-04-01T00:00:00Z"
 }
