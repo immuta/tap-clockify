@@ -9,6 +9,3 @@ RUN pip install -r tap-clockify/requirements.txt
 RUN pip install ./tap-clockify
 
 ENTRYPOINT python tap-clockify/docker-entrypoint.py
-
-# CMD ["/bin/cat", "./test"]
-# CMD ["/bin/sh", "-c", "tap-clockify -c config.json --discover"]
