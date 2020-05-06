@@ -17,5 +17,9 @@ setuptools.setup(
         [console_scripts]
         tap-clockify=tap_clockify:main
     """,
+    install_requires = [
+        "singer-python",
+        "requests"
+    ],
     include_package_data = True,
 )

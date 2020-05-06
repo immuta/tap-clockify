@@ -8,4 +8,4 @@ ADD . tap-clockify
 RUN pip install -r tap-clockify/requirements.txt
 RUN pip install ./tap-clockify
 
-ENTRYPOINT python tap-clockify/docker-entrypoint.py
+CMD [ "python", "tap-clockify/docker-entrypoint.py" ]
