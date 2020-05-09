@@ -45,7 +45,7 @@ class BaseStream:
     def load_schema_by_name(self, name):
         return singer.utils.load_json(
             os.path.normpath(
-                os.path.join(self.get_class_path(), "../schemas/{}.json".format(name))
+                os.path.join(self.get_class_path(), "schemas/{}.json".format(name))
             )
         )
 
