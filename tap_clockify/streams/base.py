@@ -34,7 +34,7 @@ class BaseStream:
         self.substreams = []
 
     def get_url_base(self):
-        return f"https://api.clockify.me/api/v1"
+        return "https://api.clockify.me/api/v1"
 
     def get_url(self):
         base = self.get_url_base()
@@ -153,7 +153,7 @@ class BaseStream:
     def sync_data(self):
         table = self.TABLE
 
-        LOGGER.info("Syncing data for {}".format(table))
+        LOGGER.info("Syncing data for %s", table)
 
         url = self.get_url()
         params = self.get_params()
@@ -185,6 +185,7 @@ class BaseStream:
                 all_resources.extend(data)
 
             LOGGER.info("Synced page %s for %s", page, self.TABLE)
+            params["page"] = params["page"] + 1
             if len(data) < params["page-size"]:
                 _next = None
         return all_resources
@@ -218,11 +219,12 @@ class TimeRangeByObjectStream(BaseStream):
     RANGE_FIELD = "start"
     REPLACEMENT_STRING = "<VAR>"
 
-    def get_params(self, start, end):
+    def get_params(self, start, end, page=1):
         return {
             self.RANGE_FIELD: start.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "end": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "page-size": 100
+            "page": 1,
+            "page-size": 250
         }
 
     def get_object_list(self):
@@ -232,17 +234,12 @@ class TimeRangeByObjectStream(BaseStream):
         table = self.TABLE
         object_list = self.get_object_list()
 
-        date = get_last_record_value_for_table(self.state, table)
-        if date is None:
-            date = get_config_start_date(self.config)
+        start_date = get_last_record_value_for_table(self.state, table)
+        if start_date is None:
+            start_date = get_config_start_date(self.config)
+        end_date = datetime.now(pytz.utc)
 
-        interval = timedelta(days=7)
-
-        all_resources = []
-        while date < datetime.now(pytz.utc):
-            res = self.sync_data_for_period(date, interval, object_list)
-            all_resources.extend(res)
-            date = date + interval
+        all_resources = self.sync_data_for_period(start_date, end_date, object_list)
 
         if self.CACHE_RESULTS:
             stream_cache.add(table, all_resources)
@@ -250,26 +247,23 @@ class TimeRangeByObjectStream(BaseStream):
 
         return self.state
 
-    def sync_data_for_period(self, date, interval, object_list):
+    def sync_data_for_period(self, start_date, end_date, object_list):
         table = self.TABLE
-
-        updated_after = date
-        updated_before = updated_after + interval
 
         LOGGER.info(
             "Syncing data from %s to %s",
-            updated_after.isoformat(),
-            updated_before.isoformat())
+            start_date.isoformat(),
+            end_date.isoformat())
         
         for obj in object_list:
-            params = self.get_params(updated_after, updated_before)
+            params = self.get_params(start_date, end_date)
             url = self.get_url().replace(self.REPLACEMENT_STRING, obj)
             res = self.sync_paginated(url, params)
 
         self.state = incorporate(self.state,
                                  table,
                                  self.RANGE_FIELD,
-                                 date.isoformat())
+                                 end_date.isoformat())
 
         save_state(self.state)
         return res
