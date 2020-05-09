@@ -5,17 +5,16 @@ import pytz
 import singer
 import singer.utils
 import singer.metrics
+import tap_clockify.cache as stream_cache
 
 from datetime import timedelta, datetime
 
-from tap_clockify.streams import cache as stream_cache
 from tap_clockify.config import get_config_start_date
 from tap_clockify.state import incorporate, save_state, \
     get_last_record_value_for_table
 
 
 LOGGER = singer.get_logger()
-
 
 class BaseStream:
     # GLOBAL PROPERTIES
@@ -267,3 +266,4 @@ class TimeRangeByObjectStream(BaseStream):
 
         save_state(self.state)
         return res
+

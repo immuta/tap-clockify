@@ -1,7 +1,6 @@
 import singer
 
-from tap_clockify.streams.base import BaseStream, TimeRangeByObjectStream
-from tap_clockify.streams import cache as stream_cache
+from tap_clockify.base import BaseStream, TimeRangeByObjectStream
 
 
 LOGGER = singer.get_logger()
@@ -111,3 +110,13 @@ class TimeEntryStream(TimeRangeByObjectStream):
     @property
     def path(self):
         return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
+
+AVAILABLE_STREAMS = [
+    ClientStream,
+    ProjectStream,
+    TagStream,
+    UserStream,
+    TaskStream,
+    TimeEntryStream,
+    WorkspaceStream
+]

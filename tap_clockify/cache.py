@@ -1,3 +1,4 @@
+
 CACHE = {}
 
 def add(key, val):
