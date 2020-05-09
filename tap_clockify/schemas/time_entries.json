@@ -10,7 +10,7 @@
     "description": {"type": ["null","string"]},
     "isLocked": {"type": "boolean"},
     "customFieldValues": {
-      "type": "array",
+      "type": ["null", "array"],
       "items": {"type": ["null", "string"]}
     },
     "tagIds": {
