@@ -13,7 +13,7 @@ class ClockifyClient:
         self.config = config
 
     def make_request(self, url, method, params=None, body=None):
-        LOGGER.info("Making {} request to {} ({})".format(method, url, params))
+        LOGGER.info("Making %s request to %s (%s)", method, url, params)
 
         response = requests.request(
             method,

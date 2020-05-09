@@ -3,7 +3,7 @@ import singer
 import sys
 
 
-LOGGER = singer.get_logger()  # noqa
+LOGGER = singer.get_logger()
 
 
 class ClockifyRunner:
@@ -71,8 +71,8 @@ class ClockifyRunner:
 
             except Exception as e:
                 LOGGER.error(str(e))
-                LOGGER.error('Failed to sync endpoint {}, moving on!'
-                             .format(stream.TABLE))
+                LOGGER.error('Failed to sync endpoint %s, moving on!',
+                             stream.TABLE)
                 raise e
 
         save_state(self.state)

@@ -1,9 +1,9 @@
-name: Publish Python distributions to PyPI and TestPyPI
+name: Publish Python distributions to PyPI
 
 on: push
 jobs:
   build-and-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@master
@@ -24,11 +24,6 @@ jobs:
         setup.py
         sdist
         bdist_wheel
-    - name: Publish distribution 📦 to Test PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.test_pypi_api_token }}
-        repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
