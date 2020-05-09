@@ -7,9 +7,9 @@ LOGGER = singer.get_logger()
 
 
 class ClientStream(BaseStream):
-    API_METHOD = 'GET'
-    TABLE = 'clients'
-    KEY_PROPERTIES = ['id']
+    API_METHOD = "GET"
+    TABLE = "clients"
+    KEY_PROPERTIES = ["id"]
 
     CACHE_RESULTS = True
 
@@ -17,10 +17,11 @@ class ClientStream(BaseStream):
     def path(self):
         return f"/workspaces/{self.config['workspace']}/clients"
 
+
 class ProjectStream(BaseStream):
-    API_METHOD = 'GET'
-    TABLE = 'projects'
-    KEY_PROPERTIES = ['id']
+    API_METHOD = "GET"
+    TABLE = "projects"
+    KEY_PROPERTIES = ["id"]
 
     CACHE_RESULTS = True
 
@@ -30,9 +31,9 @@ class ProjectStream(BaseStream):
 
 
 class TagStream(BaseStream):
-    API_METHOD = 'GET'
-    TABLE = 'tags'
-    KEY_PROPERTIES = ['id']
+    API_METHOD = "GET"
+    TABLE = "tags"
+    KEY_PROPERTIES = ["id"]
 
     CACHE_RESULTS = True
 
@@ -42,17 +43,14 @@ class TagStream(BaseStream):
 
 
 class UserStream(BaseStream):
-    API_METHOD = 'GET'
-    TABLE = 'users'
-    KEY_PROPERTIES = ['id']
+    API_METHOD = "GET"
+    TABLE = "users"
+    KEY_PROPERTIES = ["id"]
 
     CACHE_RESULTS = True
 
     def get_params(self, page=1):
-        return {
-            "page-size": 100,
-            "page": page,
-            "memberships": "ALL"}
+        return {"page-size": 100, "page": page, "memberships": "ALL"}
 
     @property
     def path(self):
@@ -60,15 +58,15 @@ class UserStream(BaseStream):
 
 
 class WorkspaceStream(BaseStream):
-    API_METHOD = 'GET'
-    TABLE = 'workspaces'
-    KEY_PROPERTIES = ['id']
+    API_METHOD = "GET"
+    TABLE = "workspaces"
+    KEY_PROPERTIES = ["id"]
 
     CACHE_RESULTS = True
 
     @property
     def path(self):
-        return '/workspaces'
+        return "/workspaces"
 
 
 class TaskStream(TimeRangeByObjectStream):
@@ -91,7 +89,6 @@ class TaskStream(TimeRangeByObjectStream):
         return f"/workspaces/{self.config['workspace']}/projects/<VAR>/tasks"
 
 
-
 class TimeEntryStream(TimeRangeByObjectStream):
     API_METHOD = "GET"
     TABLE = "time_entries"
@@ -111,6 +108,7 @@ class TimeEntryStream(TimeRangeByObjectStream):
     def path(self):
         return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
 
+
 AVAILABLE_STREAMS = [
     ClientStream,
     ProjectStream,
@@ -118,5 +116,5 @@ AVAILABLE_STREAMS = [
     UserStream,
     TaskStream,
     TimeEntryStream,
-    WorkspaceStream
+    WorkspaceStream,
 ]

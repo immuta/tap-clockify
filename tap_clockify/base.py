@@ -1,26 +1,23 @@
 import inspect
-import math
 import os.path
 import pytz
 import singer
-import singer.utils
-import singer.metrics
 import tap_clockify.cache as stream_cache
 
 from datetime import timedelta, datetime
 
 from tap_clockify.config import get_config_start_date
-from tap_clockify.state import incorporate, save_state, \
-    get_last_record_value_for_table
+from tap_clockify.state import incorporate, save_state, get_last_record_value_for_table
 
 
 LOGGER = singer.get_logger()
+
 
 class BaseStream:
     # GLOBAL PROPERTIES
     TABLE = None
     KEY_PROPERTIES = ["id"]
-    API_METHOD = 'GET'
+    API_METHOD = "GET"
     REQUIRES = []
     CACHE_RESULTS = False
     path = ""
@@ -48,9 +45,9 @@ class BaseStream:
     def load_schema_by_name(self, name):
         return singer.utils.load_json(
             os.path.normpath(
-                os.path.join(
-                    self.get_class_path(),
-                    '../schemas/{}.json'.format(name))))
+                os.path.join(self.get_class_path(), "../schemas/{}.json".format(name))
+            )
+        )
 
     def get_schema(self):
         return self.load_schema_by_name(self.TABLE)
@@ -59,16 +56,11 @@ class BaseStream:
         """Given a result set, return the data
         to be persisted for this stream.
         """
-        return [
-            self.transform_record(record)
-            for record in result
-        ]
-        
+        return [self.transform_record(record) for record in result]
+
     @classmethod
     def requirements_met(cls, catalog):
-        selected_streams = [
-            s.stream for s in catalog.streams if is_selected(s)
-        ]
+        selected_streams = [s.stream for s in catalog.streams if is_selected(s)]
 
         return set(cls.REQUIRES).issubset(selected_streams)
 
@@ -80,44 +72,36 @@ class BaseStream:
         schema = self.get_schema()
         mdata = singer.metadata.new()
 
+        mdata = singer.metadata.write(mdata, (), "inclusion", "available")
         mdata = singer.metadata.write(
-            mdata,
-            (),
-            'inclusion',
-            'available'
-        )
-        mdata = singer.metadata.write(mdata,
-            (),
-            'selected-by-default',
-            selected_by_default
+            mdata, (), "selected-by-default", selected_by_default
         )
 
-        for field_name, field_schema in schema.get('properties').items():
-            inclusion = 'available'
+        for field_name in schema.get("properties").keys():
+            inclusion = "available"
 
             if field_name in self.KEY_PROPERTIES:
-                inclusion = 'automatic'
+                inclusion = "automatic"
 
             mdata = singer.metadata.write(
-                mdata,
-                ('properties', field_name),
-                'inclusion',
-                inclusion
+                mdata, ("properties", field_name), "inclusion", inclusion
             )
             mdata = singer.metadata.write(
                 mdata,
-                ('properties', field_name),
-                'selected-by-default',
-                selected_by_default
+                ("properties", field_name),
+                "selected-by-default",
+                selected_by_default,
             )
 
-        return [{
-            'tap_stream_id': self.TABLE,
-            'stream': self.TABLE,
-            'key_properties': self.KEY_PROPERTIES,
-            'schema': self.get_schema(),
-            'metadata': singer.metadata.to_list(mdata)
-        }]
+        return [
+            {
+                "tap_stream_id": self.TABLE,
+                "stream": self.TABLE,
+                "key_properties": self.KEY_PROPERTIES,
+                "schema": self.get_schema(),
+                "metadata": singer.metadata.to_list(mdata),
+            }
+        ]
 
     def transform_record(self, record):
         with singer.Transformer() as tx:
@@ -126,10 +110,7 @@ class BaseStream:
             if self.catalog.metadata is not None:
                 metadata = singer.metadata.to_map(self.catalog.metadata)
 
-            return tx.transform(
-                record,
-                self.catalog.schema.to_dict(),
-                metadata)
+            return tx.transform(record, self.catalog.schema.to_dict(), metadata)
 
     def get_catalog_keys(self):
         return list(self.catalog.schema.properties.keys())
@@ -138,12 +119,15 @@ class BaseStream:
         singer.write_schema(
             self.catalog.stream,
             self.catalog.schema.to_dict(),
-            key_properties=self.catalog.key_properties)
+            key_properties=self.catalog.key_properties,
+        )
 
     def sync(self):
-        LOGGER.info('Syncing stream {} with {}'
-                    .format(self.catalog.tap_stream_id,
-                            self.__class__.__name__))
+        LOGGER.info(
+            "Syncing stream {} with {}".format(
+                self.catalog.tap_stream_id, self.__class__.__name__
+            )
+        )
 
         self.write_schema()
 
@@ -194,20 +178,20 @@ def is_selected(stream_catalog):
     metadata = singer.metadata.to_map(stream_catalog.metadata)
     stream_metadata = metadata.get((), {})
 
-    inclusion = stream_metadata.get('inclusion')
+    inclusion = stream_metadata.get("inclusion")
 
-    if stream_metadata.get('selected') is not None:
-        selected = stream_metadata.get('selected')
+    if stream_metadata.get("selected") is not None:
+        selected = stream_metadata.get("selected")
     else:
-        selected = stream_metadata.get('selected-by-default')
+        selected = stream_metadata.get("selected-by-default")
 
-    if inclusion == 'unsupported':
+    if inclusion == "unsupported":
         return False
 
     elif selected is not None:
         return selected
 
-    return inclusion == 'automatic'
+    return inclusion == "automatic"
 
 
 class TimeRangeByObjectStream(BaseStream):
@@ -215,6 +199,7 @@ class TimeRangeByObjectStream(BaseStream):
     iterates over a certain dimension, such as <userId> or
     <projectId>.
     """
+
     RANGE_FIELD = "start"
     REPLACEMENT_STRING = "<VAR>"
 
@@ -223,7 +208,7 @@ class TimeRangeByObjectStream(BaseStream):
             self.RANGE_FIELD: start.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "end": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "page": 1,
-            "page-size": 250
+            "page-size": 250,
         }
 
     def get_object_list(self):
@@ -250,20 +235,17 @@ class TimeRangeByObjectStream(BaseStream):
         table = self.TABLE
 
         LOGGER.info(
-            "Syncing data from %s to %s",
-            start_date.isoformat(),
-            end_date.isoformat())
-        
+            "Syncing data from %s to %s", start_date.isoformat(), end_date.isoformat()
+        )
+
         for obj in object_list:
             params = self.get_params(start_date, end_date)
             url = self.get_url().replace(self.REPLACEMENT_STRING, obj)
             res = self.sync_paginated(url, params)
 
-        self.state = incorporate(self.state,
-                                 table,
-                                 self.RANGE_FIELD,
-                                 end_date.isoformat())
+        self.state = incorporate(
+            self.state, table, self.RANGE_FIELD, end_date.isoformat()
+        )
 
         save_state(self.state)
         return res
-

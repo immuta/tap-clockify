@@ -23,8 +23,8 @@ def incorporate(state, table, field, value):
 
     parsed = parse(value).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    if 'bookmarks' not in new_state:
-        new_state['bookmarks'] = {}
+    if "bookmarks" not in new_state:
+        new_state["bookmarks"] = {}
 
     last_record = singer.bookmarks.get_bookmark(new_state, table, "last_record")
     if last_record is None or last_record < value:
@@ -37,7 +37,7 @@ def save_state(state):
     if not state:
         return
 
-    LOGGER.info('Updating state.')
+    LOGGER.info("Updating state.")
 
     singer.write_state(state)
 

@@ -1,6 +1,5 @@
 import requests
 import singer
-import singer.metrics
 
 LOGGER = singer.get_logger()  # noqa
 
@@ -19,11 +18,12 @@ class ClockifyClient:
             method,
             url,
             headers={
-                'x-api-key': self.config["api_key"],
-                'Content-Type': 'application/json'
+                "x-api-key": self.config["api_key"],
+                "Content-Type": "application/json",
             },
             params=params,
-            json=body)
+            json=body,
+        )
 
         if response.status_code != 200:
             raise RuntimeError(response.text)
