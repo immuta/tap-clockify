@@ -5,19 +5,19 @@
       "type": "string"
     },
     "name": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "email": {
       "type": "string"
     },
     "profilePicture": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "activeWorkspace": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "defaultWorkspace": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "status": {
       "type": "string"
