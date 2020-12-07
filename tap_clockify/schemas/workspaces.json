@@ -5,8 +5,11 @@
     "name": {"type": "string"},
     "imageUrl": {"type": "string"},
     "hourlyRate": {
-      "amount": {"type": "integer"},
-      "currency": {"type": "string"}
+      "type": ["null", "object"],
+      "properties": {
+        "amount": {"type": "integer"},
+        "currency": {"type": "string"}
+      }
     },
     "workspaceSettings": {
       "type": "object",
