@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="tap-clockify",
-    version="0.2.0",
+    version="0.2.2",
     description="Singer.io tap for extracting data",
     author="Stephen Bailey",
     url="http://singer.io",
