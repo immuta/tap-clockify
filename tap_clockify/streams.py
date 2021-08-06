@@ -84,6 +84,7 @@ class UsersStream(ClockifyStream):
             child_context = {"user_id": row["id"]}
             yield (row, child_context)
 
+
 class TasksStream(ClockifyStream):
     name = "tasks"
     primary_keys = ["id"]
