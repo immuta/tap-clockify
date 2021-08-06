@@ -1,120 +1,88 @@
-import singer
+"""Stream type classes for tap-clockify."""
 
-from tap_clockify.base import BaseStream, TimeRangeByObjectStream
+from pathlib import Path
+from typing import Any, Dict, Optional, Union, List, Iterable
 
+from singer_sdk import typing as th  # JSON Schema typing helpers
 
-LOGGER = singer.get_logger()
+from tap_clockify.client import ClockifyStream
 
-
-class ClientStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "clients"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/clients"
+SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-class ProjectStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "projects"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/projects"
+class ClientsStream(ClockifyStream):
+    name = "clients"
+    primary_keys = ["id"]
+    path = "/clients"
+    schema_filepath = SCHEMAS_DIR / "clients.json"
 
 
-class TagStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "tags"
-    KEY_PROPERTIES = ["id"]
+class ProjectsStream(ClockifyStream):
+    name = "projects"
+    primary_keys = ["id"]
+    path =  "/projects"
+    schema_filepath = SCHEMAS_DIR / "projects.json"
 
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/tags"
-
-
-class UserStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "users"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    def get_params(self, page=1):
-        return {"page-size": 100, "page": page, "memberships": "ALL"}
-
-    @property
-    def path(self):
-        return f"/workspace/{self.config['workspace']}/users"
+    def get_records(self, context: Optional[dict]):
+        "Overwrite default method to return both the record and child context."
+        for row in self.request_records(context):
+            row = self.post_process(row, context)
+            child_context = {"project_id": row["id"]}
+            yield (row, child_context)
 
 
-class WorkspaceStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "workspaces"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return "/workspaces"
+class TagsStream(ClockifyStream):
+    name = "tags"
+    primary_keys = ["id"]
+    path =  "/tags"
+    schema_filepath = SCHEMAS_DIR / "tags.json"
 
 
-class TaskStream(TimeRangeByObjectStream):
-    API_METHOD = "GET"
-    TABLE = "tasks"
-    KEY_PROPERTIES = ["id"]
-    REPLACEMENT_STRING = "<VAR>"
 
-    CACHE_RESULTS = True
+class UsersStream(ClockifyStream):
+    name = "users"
+    primary_keys = ["id"]
+    path = "/users"
+    schema_filepath = SCHEMAS_DIR / "users.json"
 
-    def get_object_list(self):
-        url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/projects"
-        api_method = "GET"
-        params = {"page-size": 500}
-        results = self.client.make_request(url, api_method, params=params)
-        return [r["id"] for r in results]
+    def get_records(self, context: Optional[dict]):
+        "Overwrite default method to return both the record and child context."
+        for row in self.request_records(context):
+            row = self.post_process(row, context)
+            child_context = {"user_id": row["id"]}
+            yield (row, child_context)
+
+
+class TasksStream(ClockifyStream):
+    name = "tasks"
+    primary_keys = ["id"]
+    path =  "/projects/{project_id}/tasks"
+    parent_stream_type = ProjectsStream
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "tasks.json"
+
+
+class TimeEntriesStream(ClockifyStream):
+    name = "time_entries"
+    primary_keys = ["id"]
+    path =  "/user/{user_id}/time-entries"
+    parent_stream_type = UsersStream
+    replication_key = "started_at"
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "time_entries.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        row["started_at"] = row["timeInterval"]["start"]
+        return row
+
+
+class WorkspacesStream(ClockifyStream):
+    name = "workspaces"
+    primary_keys = ["id"]
+    path =  "/workspaces"
+    schema_filepath = SCHEMAS_DIR / "workspaces.json"
 
     @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/projects/<VAR>/tasks"
+    def url_base(self):
+        return f'https://api.clockify.me/api/v1'
 
-
-class TimeEntryStream(TimeRangeByObjectStream):
-    API_METHOD = "GET"
-    TABLE = "time_entries"
-    KEY_PROPERTIES = ["id"]
-    REPLACEMENT_STRING = "<VAR>"
-
-    CACHE_RESULTS = True
-
-    def get_object_list(self):
-        url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/users"
-        api_method = "GET"
-        params = {"page-size": 500, "memberships": "NONE"}
-        results = self.client.make_request(url, api_method, params=params)
-        return [r["id"] for r in results]
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
-
-
-AVAILABLE_STREAMS = [
-    ClientStream,
-    ProjectStream,
-    TagStream,
-    UserStream,
-    TaskStream,
-    TimeEntryStream,
-    WorkspaceStream,
-]

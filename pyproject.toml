@@ -1,19 +1,22 @@
 [tool.poetry]
 name = "tap-clockify"
-version = "1.0.0"
-description = "Singer tap for extracting data from Clockify"
-authors = ["Stephen Bailey <stkbailey@gmail.com>"]
-license = "GNU"
-readme = "README.md"
-packages = [{include = "tap_clockify"}]
+version = "0.3.0"
+description = "`tap-clockify` is a Singer tap for Clockify, built with the Meltano SDK for Singer Taps."
+authors = ["Stephen Bailey"]
+license = "Apache 2.0"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-singer-python = "5.9.0"
-requests = "^2.26.0"
+python = "<3.9,>=3.6.1"
+requests = "^2.25.1"
+singer-sdk = "^0.3.3"
 
 [tool.poetry.dev-dependencies]
+pytest = "^6.1.2"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+# CLI declaration
+tap-clockify = 'tap_clockify.tap:TapClockify.cli'

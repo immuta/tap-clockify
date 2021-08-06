@@ -1,31 +1,61 @@
+"""REST client handling, including ClockifyStream base class."""
+
 import requests
-import singer
+from pathlib import Path
+from typing import Any, Dict, Optional, Union, List, Iterable
 
-LOGGER = singer.get_logger()  # noqa
+from singer_sdk.helpers.jsonpath import extract_jsonpath
+from singer_sdk.streams import RESTStream
 
 
-class ClockifyClient:
+SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
-    MAX_TRIES = 5
 
-    def __init__(self, config):
-        self.config = config
+class ClockifyStream(RESTStream):
+    """Clockify stream class."""
 
-    def make_request(self, url, method, params=None, body=None):
-        LOGGER.info("Making %s request to %s (%s)", method, url, params)
+    records_jsonpath = "$[*]"
+    _page_size = 100
 
-        response = requests.request(
-            method,
-            url,
-            headers={
-                "x-api-key": self.config["api_key"],
-                "Content-Type": "application/json",
-            },
-            params=params,
-            json=body,
-        )
+    @property
+    def url_base(self):
+        return f'https://api.clockify.me/api/v1/workspaces/{self.config["workspace"]}'
 
-        if response.status_code != 200:
-            raise RuntimeError(response.text)
+    @property
+    def http_headers(self) -> dict:
+        """Return the http headers needed."""
+        headers = {
+            "Content-Type": "application/json",
+            "x-api-key": self.config["api_key"]
+        }
+        if "user_agent" in self.config:
+            headers["User-Agent"] = self.config.get("user_agent")
+        return headers
 
-        return response.json()
+    def get_next_page_token(
+        self, response: requests.Response, previous_token: Optional[Any]
+    ) -> Optional[Any]:
+        """Return a token for identifying next page or None if no more pages."""
+        current_page = previous_token or 1
+        count_records = len(response.json())
+        if count_records == self._page_size:
+            next_page_token = current_page + 1
+            self.logger.debug(f"Next page token retrieved: {next_page_token}")
+            return next_page_token
+        return None
+
+    def get_url_params(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Return a dictionary of values to be used in URL parameterization."""
+        params = {
+            "page-size": self._page_size,
+            "page": 1,
+        }
+        if next_page_token:
+            params["page"] = next_page_token
+        if self.replication_key:
+            start_time = self.get_starting_timestamp(context)
+            start_time_fmt = start_time.strftime('%Y-%m-%dT%H:%M:%SZ') if start_time else None
+            params["start"] = start_time_fmt
+        return params
