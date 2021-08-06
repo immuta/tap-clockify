@@ -14,6 +14,16 @@ It can generate a catalog of available data in Clockify and extract the followin
 - users
 - workspaces
 
+### Configuration
+
+```
+{
+  "api_key": "string",
+  "workspace": "string",
+  "start_date": "2020-04-01T00:00:00Z"
+}
+```
+
 ### Quick Start
 
 1. Install

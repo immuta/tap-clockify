@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "tap-clockify"
+version = "1.0.0"
+description = "Singer tap for extracting data from Clockify"
+authors = ["Stephen Bailey <stkbailey@gmail.com>"]
+license = "GNU"
+readme = "README.md"
+packages = [{include = "tap_clockify"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+singer-python = "5.9.0"
+requests = "^2.26.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
