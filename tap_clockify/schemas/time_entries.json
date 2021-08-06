@@ -2,6 +2,7 @@
   "type": "object",
   "properties": {
     "id": {"type": "string"},
+    "started_at": {"type": ["null", "string"], "format": "datetime"},
     "userId": {"type": "string"},
     "projectId": {"type": ["null", "string"]},
     "taskId": {"type": ["null", "string"]},

@@ -77,6 +77,12 @@ class UsersStream(ClockifyStream):
     path = "/users"
     schema_filepath = SCHEMAS_DIR / "users.json"
 
+    def get_records(self, context: Optional[dict]):
+        "Overwrite default method to return both the record and child context."
+        for row in self.request_records(context):
+            row = self.post_process(row, context)
+            child_context = {"user_id": row["id"]}
+            yield (row, child_context)
 
 class TasksStream(ClockifyStream):
     name = "tasks"
@@ -87,16 +93,15 @@ class TasksStream(ClockifyStream):
     schema_filepath = SCHEMAS_DIR / "tasks.json"
 
 
-# class TimeEntryStream(TimeRangeByObjectStream):
-#     name = "time_entries"
-#     primary_keys = ["id"]
-#     REPLACEMENT_STRING = "<VAR>"
-#     path =  "/user/<VAR>/time-entries"
+class TimeEntriesStream(ClockifyStream):
+    name = "time_entries"
+    primary_keys = ["id"]
+    path =  "/user/{user_id}/time-entries"
+    parent_stream_type = UsersStream
+    replication_key = "started_at"
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "time_entries.json"
 
-
-#     def get_object_list(self):
-#         url = self.get_url_base() + "/users"
-#         api_method = "GET"
-#         params = {"page-size": 500, "memberships": "NONE"}
-#         results = self.client.make_request(url, api_method, params=params)
-#         return [r["id"] for r in results]
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        row["started_at"] = row["timeInterval"]["start"]
+        return row
