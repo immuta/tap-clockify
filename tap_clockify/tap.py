@@ -12,6 +12,7 @@ from tap_clockify.streams import (
     TasksStream,
     TimeEntriesStream,
     UsersStream,
+    WorkspacesStream
 )
 
 STREAM_TYPES = [
@@ -21,6 +22,7 @@ STREAM_TYPES = [
     TasksStream,
     TimeEntriesStream,
     UsersStream,
+    WorkspacesStream
 ]
 
 

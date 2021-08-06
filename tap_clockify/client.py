@@ -15,7 +15,7 @@ class ClockifyStream(RESTStream):
     """Clockify stream class."""
 
     records_jsonpath = "$[*]"
-    _page_size = 20
+    _page_size = 100
 
     @property
     def url_base(self):

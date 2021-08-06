@@ -38,6 +38,7 @@ class TagsStream(ClockifyStream):
     schema_filepath = SCHEMAS_DIR / "tags.json"
 
 
+
 class UsersStream(ClockifyStream):
     name = "users"
     primary_keys = ["id"]
@@ -73,3 +74,15 @@ class TimeEntriesStream(ClockifyStream):
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         row["started_at"] = row["timeInterval"]["start"]
         return row
+
+
+class WorkspacesStream(ClockifyStream):
+    name = "workspaces"
+    primary_keys = ["id"]
+    path =  "/workspaces"
+    schema_filepath = SCHEMAS_DIR / "workspaces.json"
+
+    @property
+    def url_base(self):
+        return f'https://api.clockify.me/api/v1'
+
