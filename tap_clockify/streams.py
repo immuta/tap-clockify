@@ -1,120 +1,108 @@
-import singer
+"""Stream type classes for tap-clockify."""
 
-from tap_clockify.base import BaseStream, TimeRangeByObjectStream
+from pathlib import Path
+from typing import Any, Dict, Optional, Union, List, Iterable
 
+from singer_sdk import typing as th  # JSON Schema typing helpers
 
-LOGGER = singer.get_logger()
+from tap_clockify.client import ClockifyStream
 
-
-class ClientStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "clients"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/clients"
+SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-class ProjectStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "projects"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/projects"
-
-
-class TagStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "tags"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/tags"
+# class UsersStream(ClockifyStream):
+#     """Define custom stream."""
+#     name = "users"
+#     path = "/users"
+#     primary_keys = ["id"]
+#     replication_key = None
+#     # Optionally, you may also use `schema_filepath` in place of `schema`:
+#     # schema_filepath = SCHEMAS_DIR / "users.json"
+#     schema = th.PropertiesList(
+#         th.Property("name", th.StringType),
+#         th.Property("id", th.StringType),
+#         th.Property("age", th.IntegerType),
+#         th.Property("email", th.StringType),
+#         th.Property("street", th.StringType),
+#         th.Property("city", th.StringType),
+#         th.Property("state", th.StringType),
+#         th.Property("zip", th.StringType),
+#     ).to_dict()
 
 
-class UserStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "users"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    def get_params(self, page=1):
-        return {"page-size": 100, "page": page, "memberships": "ALL"}
-
-    @property
-    def path(self):
-        return f"/workspace/{self.config['workspace']}/users"
+# class GroupsStream(ClockifyStream):
+#     """Define custom stream."""
+#     name = "groups"
+#     path = "/groups"
+#     primary_keys = ["id"]
+#     replication_key = "modified"
+#     schema = th.PropertiesList(
+#         th.Property("name", th.StringType),
+#         th.Property("id", th.StringType),
+#         th.Property("modified", th.DateTimeType),
+#     ).to_dict()
 
 
-class WorkspaceStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "workspaces"
-    KEY_PROPERTIES = ["id"]
 
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return "/workspaces"
+class ClientsStream(ClockifyStream):
+    name = "clients"
+    primary_keys = ["id"]
+    path = "/clients"
+    schema_filepath = SCHEMAS_DIR / "clients.json"
 
 
-class TaskStream(TimeRangeByObjectStream):
-    API_METHOD = "GET"
-    TABLE = "tasks"
-    KEY_PROPERTIES = ["id"]
-    REPLACEMENT_STRING = "<VAR>"
-
-    CACHE_RESULTS = True
-
-    def get_object_list(self):
-        url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/projects"
-        api_method = "GET"
-        params = {"page-size": 500}
-        results = self.client.make_request(url, api_method, params=params)
-        return [r["id"] for r in results]
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/projects/<VAR>/tasks"
+class ProjectsStream(ClockifyStream):
+    name = "projects"
+    primary_keys = ["id"]
+    path =  "/projects"
+    schema_filepath = SCHEMAS_DIR / "projects.json"
 
 
-class TimeEntryStream(TimeRangeByObjectStream):
-    API_METHOD = "GET"
-    TABLE = "time_entries"
-    KEY_PROPERTIES = ["id"]
-    REPLACEMENT_STRING = "<VAR>"
-
-    CACHE_RESULTS = True
-
-    def get_object_list(self):
-        url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/users"
-        api_method = "GET"
-        params = {"page-size": 500, "memberships": "NONE"}
-        results = self.client.make_request(url, api_method, params=params)
-        return [r["id"] for r in results]
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
+class TagsStream(ClockifyStream):
+    name = "tags"
+    primary_keys = ["id"]
+    path =  "/tags"
+    schema_filepath = SCHEMAS_DIR / "tags.json"
 
 
-AVAILABLE_STREAMS = [
-    ClientStream,
-    ProjectStream,
-    TagStream,
-    UserStream,
-    TaskStream,
-    TimeEntryStream,
-    WorkspaceStream,
-]
+class UsersStream(ClockifyStream):
+    name = "users"
+    primary_keys = ["id"]
+    path = "/users"
+    schema_filepath = SCHEMAS_DIR / "users.json"
+
+
+class WorkspacesStream(ClockifyStream):
+    name = "workspaces"
+    primary_keys = ["id"]
+    path = "/workspaces"
+    schema_filepath = SCHEMAS_DIR / "workspaces.json"
+
+
+# class TaskStream(TimeRangeByObjectStream):
+#     name = "tasks"
+#     primary_keys = ["id"]
+#     REPLACEMENT_STRING = "<VAR>"
+#     path =  "/projects/<VAR>/tasks"
+
+#     def get_object_list(self):
+#         url = self.get_url_base() + "/projects"
+#         api_method = "GET"
+#         params = {"page-size": 500}
+#         results = self.client.make_request(url, api_method, params=params)
+#         return [r["id"] for r in results]
+
+
+# class TimeEntryStream(TimeRangeByObjectStream):
+#     name = "time_entries"
+#     primary_keys = ["id"]
+#     REPLACEMENT_STRING = "<VAR>"
+#     path =  "/user/<VAR>/time-entries"
+
+
+#     def get_object_list(self):
+#         url = self.get_url_base() + "/users"
+#         api_method = "GET"
+#         params = {"page-size": 500, "memberships": "NONE"}
+#         results = self.client.make_request(url, api_method, params=params)
+#         return [r["id"] for r in results]
