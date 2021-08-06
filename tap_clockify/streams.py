@@ -57,6 +57,12 @@ class ProjectsStream(ClockifyStream):
     path =  "/projects"
     schema_filepath = SCHEMAS_DIR / "projects.json"
 
+    def get_records(self, context: Optional[dict]):
+        "Overwrite default method to return both the record and child context."
+        for row in self.request_records(context):
+            row = self.post_process(row, context)
+            child_context = {"project_id": row["id"]}
+            yield (row, child_context)
 
 class TagsStream(ClockifyStream):
     name = "tags"
@@ -72,25 +78,13 @@ class UsersStream(ClockifyStream):
     schema_filepath = SCHEMAS_DIR / "users.json"
 
 
-class WorkspacesStream(ClockifyStream):
-    name = "workspaces"
+class TasksStream(ClockifyStream):
+    name = "tasks"
     primary_keys = ["id"]
-    path = "/workspaces"
-    schema_filepath = SCHEMAS_DIR / "workspaces.json"
-
-
-# class TaskStream(TimeRangeByObjectStream):
-#     name = "tasks"
-#     primary_keys = ["id"]
-#     REPLACEMENT_STRING = "<VAR>"
-#     path =  "/projects/<VAR>/tasks"
-
-#     def get_object_list(self):
-#         url = self.get_url_base() + "/projects"
-#         api_method = "GET"
-#         params = {"page-size": 500}
-#         results = self.client.make_request(url, api_method, params=params)
-#         return [r["id"] for r in results]
+    path =  "/projects/{project_id}/tasks"
+    parent_stream_type = ProjectsStream
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "tasks.json"
 
 
 # class TimeEntryStream(TimeRangeByObjectStream):
