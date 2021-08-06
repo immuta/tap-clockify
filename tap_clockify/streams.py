@@ -10,40 +10,6 @@ from tap_clockify.client import ClockifyStream
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-# class UsersStream(ClockifyStream):
-#     """Define custom stream."""
-#     name = "users"
-#     path = "/users"
-#     primary_keys = ["id"]
-#     replication_key = None
-#     # Optionally, you may also use `schema_filepath` in place of `schema`:
-#     # schema_filepath = SCHEMAS_DIR / "users.json"
-#     schema = th.PropertiesList(
-#         th.Property("name", th.StringType),
-#         th.Property("id", th.StringType),
-#         th.Property("age", th.IntegerType),
-#         th.Property("email", th.StringType),
-#         th.Property("street", th.StringType),
-#         th.Property("city", th.StringType),
-#         th.Property("state", th.StringType),
-#         th.Property("zip", th.StringType),
-#     ).to_dict()
-
-
-# class GroupsStream(ClockifyStream):
-#     """Define custom stream."""
-#     name = "groups"
-#     path = "/groups"
-#     primary_keys = ["id"]
-#     replication_key = "modified"
-#     schema = th.PropertiesList(
-#         th.Property("name", th.StringType),
-#         th.Property("id", th.StringType),
-#         th.Property("modified", th.DateTimeType),
-#     ).to_dict()
-
-
-
 class ClientsStream(ClockifyStream):
     name = "clients"
     primary_keys = ["id"]
@@ -63,6 +29,7 @@ class ProjectsStream(ClockifyStream):
             row = self.post_process(row, context)
             child_context = {"project_id": row["id"]}
             yield (row, child_context)
+
 
 class TagsStream(ClockifyStream):
     name = "tags"
