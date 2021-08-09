@@ -12,6 +12,11 @@ jobs:
           python-version: 3.8
       - name: Python Poetry Action
         uses: abatilo/actions-poetry@v2.1.0
-      - name: Publish Package
+      - name: Install Package
+        run: poetry install
+      - name: Test Package
         run: poetry run pytest
+        with:
+          tap_clockify_api_key: ${{ secrets.tap_clockify_api_key }}
+          tap_clockify_workspace: ${{ secrets.tap_clockify_workspace }}
 
