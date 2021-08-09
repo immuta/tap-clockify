@@ -2,16 +2,19 @@ name: Test Package
 
 on: push
 
+env:
+  TAP_CLOCKIFY_API_KEY: ${{ secrets.tap_clockify_api_key }}
+  TAP_CLOCKIFY_WORKSPACE: ${{ secrets.tap_clockify_workspace }}
+
 jobs:
-  build:
+  test_package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Python Poetry Action
-        uses: abatilo/actions-poetry@v2.1.0
-      - name: Publish Package
-        run: poetry run pytest
-
+      - name: Install Package
+        run: pip install . pytest
+      - name: Test Package
+        run: pytest
