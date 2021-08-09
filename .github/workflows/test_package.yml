@@ -3,8 +3,8 @@ name: Test Package
 on: push
 
 env:
-  tap_clockify_api_key: ${{ secrets.tap_clockify_api_key }}
-  tap_clockify_workspace: ${{ secrets.tap_clockify_workspace }}
+  TAP_CLOCKIFY_API_KEY: ${{ secrets.tap_clockify_api_key }}
+  TAP_CLOCKIFY_WORKSPACE: ${{ secrets.tap_clockify_workspace }}
 
 jobs:
   test_package:
