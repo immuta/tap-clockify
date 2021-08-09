@@ -15,8 +15,8 @@ jobs:
         with:
           python-version: 3.8
       - name: Install Poetry into Environment
-        uses: abatilo/actions-poetry@v2.1.0
+        uses: abatilo/actions-poetry@v2.1.2
       - name: Install Package
-        run: poetry install
+        run: poetry install --extras=setuptools
       - name: Test Package
         run: poetry run pytest
