@@ -9,8 +9,6 @@ env:
 jobs:
   test_package:
     runs-on: ubuntu-latest
-    defaults:
-      working-directory: tap-clockify
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
