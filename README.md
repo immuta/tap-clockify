@@ -1,5 +1,8 @@
 # tap-clockify
 
+![Test Packages](https://github.com/immuta/tap-clockify/actions/workflows/test_package.yml/badge.svg)
+![Last Release Published](https://github.com/immuta/tap-clockify/actions/workflows/publish_package.yml/badge.svg)
+
 **Author**: Stephen Bailey (sbailey@immuta.com)
 
 This is a [Singer](http://singer.io) tap that produces JSON-formatted data following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/SPEC.md).
