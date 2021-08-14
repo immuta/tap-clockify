@@ -10,14 +10,11 @@ schema = th.PropertiesList(
     th.Property("billable", th.BooleanType),
     th.Property("description", th.StringType),
     th.Property("isLocked", th.BooleanType),
-    th.Property("customFieldValues", th.ArrayType),
-    th.Property("tagIds", th.ArrayType),
-    th.Property(
-        "timeInterval",
-        th.ObjectType(
-            th.Property("duration", th.StringType),
-            th.Property("end", th.StringType),
-            th.Property("start", th.StringType),
-        ),
-    ),
+    th.Property("customFieldValues", th.ArrayType(th.StringType)),
+    th.Property("tagIds", th.ArrayType(th.StringType)),
+    th.Property("timeInterval", th.ObjectType(
+        th.Property("duration", th.StringType),
+        th.Property("end", th.StringType),
+        th.Property("start", th.StringType),
+    )),
 ).to_dict()

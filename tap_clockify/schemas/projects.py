@@ -13,12 +13,12 @@ schema = th.PropertiesList(
     th.Property("template", th.BooleanType),
     th.Property("public", th.BooleanType),
     th.Property("color", th.StringType),
-    th.Property(
-        "estimate",
-        th.ObjectType(
-            th.Property("estimate", th.StringType),
-            th.Property("type", th.StringType),
-        ),
-    ),
-    th.Property("hourlyRate", th.ObjectType),
+    th.Property("estimate", th.ObjectType(
+        th.Property("estimate", th.StringType),
+        th.Property("type", th.StringType),
+    )),
+    th.Property("hourlyRate", th.ObjectType(
+        th.Property("amount", th.NumberType),
+        th.Property("currency", th.StringType),
+    )),
 ).to_dict()
