@@ -26,11 +26,6 @@ jobs:
       - name: Install Package
         run: poetry install
 
-      # - name: Install Poetry via pip
-      #   run: |
-      #     pip install poetry
-      #     poetry install
-
       - name: Test Package
         run: |
           poetry run pytest
