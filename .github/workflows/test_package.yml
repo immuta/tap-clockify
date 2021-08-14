@@ -23,6 +23,9 @@ jobs:
           export PATH=$PATH:$HOME/.local/bin
           poetry self update --preview
 
+      - name: Install Package
+        run: poetry install
+
       # - name: Install Poetry via pip
       #   run: |
       #     pip install poetry
