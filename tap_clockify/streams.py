@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional, Union, List, Iterable
 
 from singer_sdk import typing as th  # JSON Schema typing helpers
 
+from tap_clockify import schemas
 from tap_clockify.client import ClockifyStream
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -14,14 +15,14 @@ class ClientsStream(ClockifyStream):
     name = "clients"
     primary_keys = ["id"]
     path = "/clients"
-    schema_filepath = SCHEMAS_DIR / "clients.json"
+    schema = schemas.clients
 
 
 class ProjectsStream(ClockifyStream):
     name = "projects"
     primary_keys = ["id"]
     path = "/projects"
-    schema_filepath = SCHEMAS_DIR / "projects.json"
+    schema = schemas.projects
 
     def get_records(self, context: Optional[dict]):
         "Overwrite default method to return both the record and child context."
@@ -35,14 +36,14 @@ class TagsStream(ClockifyStream):
     name = "tags"
     primary_keys = ["id"]
     path = "/tags"
-    schema_filepath = SCHEMAS_DIR / "tags.json"
+    schema = schemas.tags
 
 
 class UsersStream(ClockifyStream):
     name = "users"
     primary_keys = ["id"]
     path = "/users"
-    schema_filepath = SCHEMAS_DIR / "users.json"
+    schema = schemas.users
 
     def get_records(self, context: Optional[dict]):
         "Overwrite default method to return both the record and child context."
@@ -58,7 +59,7 @@ class TasksStream(ClockifyStream):
     path = "/projects/{project_id}/tasks"
     parent_stream_type = ProjectsStream
     ignore_parent_replication_key = True
-    schema_filepath = SCHEMAS_DIR / "tasks.json"
+    schema = schemas.tasks
 
 
 class TimeEntriesStream(ClockifyStream):
@@ -68,7 +69,7 @@ class TimeEntriesStream(ClockifyStream):
     parent_stream_type = UsersStream
     replication_key = "started_at"
     ignore_parent_replication_key = True
-    schema_filepath = SCHEMAS_DIR / "time_entries.json"
+    schema = schemas.time_entries
 
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         row["started_at"] = row["timeInterval"]["start"]
@@ -79,7 +80,7 @@ class WorkspacesStream(ClockifyStream):
     name = "workspaces"
     primary_keys = ["id"]
     path = "/workspaces"
-    schema_filepath = SCHEMAS_DIR / "workspaces.json"
+    schema = schemas.workspaces
 
     @property
     def url_base(self):

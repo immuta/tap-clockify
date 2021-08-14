@@ -23,7 +23,7 @@ jobs:
       - name: Build and Publish Package
         run: |
           poetry build
-          poetry publish -u ${USERNAME} - p ${PASSWORD}
+          poetry publish -u ${USERNAME} -p ${PASSWORD}
         env:
           USERNAME: "__token__"
           PASSWORD: ${{ secrets.pypi_api_token }}
