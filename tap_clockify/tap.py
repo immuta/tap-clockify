@@ -12,7 +12,7 @@ from tap_clockify.streams import (
     TasksStream,
     TimeEntriesStream,
     UsersStream,
-    WorkspacesStream
+    WorkspacesStream,
 )
 
 STREAM_TYPES = [
@@ -22,12 +22,13 @@ STREAM_TYPES = [
     TasksStream,
     TimeEntriesStream,
     UsersStream,
-    WorkspacesStream
+    WorkspacesStream,
 ]
 
 
 class TapClockify(Tap):
     """Clockify tap class."""
+
     name = "tap-clockify"
 
     config_jsonschema = th.PropertiesList(

@@ -26,7 +26,7 @@ class ClockifyStream(RESTStream):
         """Return the http headers needed."""
         headers = {
             "Content-Type": "application/json",
-            "x-api-key": self.config["api_key"]
+            "x-api-key": self.config["api_key"],
         }
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
@@ -56,6 +56,8 @@ class ClockifyStream(RESTStream):
             params["page"] = next_page_token
         if self.replication_key:
             start_time = self.get_starting_timestamp(context)
-            start_time_fmt = start_time.strftime('%Y-%m-%dT%H:%M:%SZ') if start_time else None
+            start_time_fmt = (
+                start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
+            )
             params["start"] = start_time_fmt
         return params

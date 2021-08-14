@@ -20,7 +20,7 @@ class ClientsStream(ClockifyStream):
 class ProjectsStream(ClockifyStream):
     name = "projects"
     primary_keys = ["id"]
-    path =  "/projects"
+    path = "/projects"
     schema_filepath = SCHEMAS_DIR / "projects.json"
 
     def get_records(self, context: Optional[dict]):
@@ -34,9 +34,8 @@ class ProjectsStream(ClockifyStream):
 class TagsStream(ClockifyStream):
     name = "tags"
     primary_keys = ["id"]
-    path =  "/tags"
+    path = "/tags"
     schema_filepath = SCHEMAS_DIR / "tags.json"
-
 
 
 class UsersStream(ClockifyStream):
@@ -56,7 +55,7 @@ class UsersStream(ClockifyStream):
 class TasksStream(ClockifyStream):
     name = "tasks"
     primary_keys = ["id"]
-    path =  "/projects/{project_id}/tasks"
+    path = "/projects/{project_id}/tasks"
     parent_stream_type = ProjectsStream
     ignore_parent_replication_key = True
     schema_filepath = SCHEMAS_DIR / "tasks.json"
@@ -65,7 +64,7 @@ class TasksStream(ClockifyStream):
 class TimeEntriesStream(ClockifyStream):
     name = "time_entries"
     primary_keys = ["id"]
-    path =  "/user/{user_id}/time-entries"
+    path = "/user/{user_id}/time-entries"
     parent_stream_type = UsersStream
     replication_key = "started_at"
     ignore_parent_replication_key = True
@@ -79,10 +78,9 @@ class TimeEntriesStream(ClockifyStream):
 class WorkspacesStream(ClockifyStream):
     name = "workspaces"
     primary_keys = ["id"]
-    path =  "/workspaces"
+    path = "/workspaces"
     schema_filepath = SCHEMAS_DIR / "workspaces.json"
 
     @property
     def url_base(self):
-        return f'https://api.clockify.me/api/v1'
-
+        return f"https://api.clockify.me/api/v1"
