@@ -1,9 +1,21 @@
 [tool.poetry]
 name = "tap-clockify"
-version = "1.0.1"
-description = "`tap-clockify` is a Singer tap for Clockify, built with the Meltano SDK for Singer Taps."
-authors = ["Stephen Bailey"]
-license = "Apache 2.0"
+version = "1.0.6"
+description = "Singer tap for Clockify, built with the Meltano SDK for Singer Taps."
+authors = ["Stephen Bailey <stkbailey@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/immuta/tap-clockify"
+keywords = [
+    "singer",
+    "elt",
+    "replication"
+]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Database"
+]
 
 [tool.poetry.dependencies]
 python = "<3.9,>=3.6.2"
@@ -21,3 +33,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 # CLI declaration
 tap-clockify = 'tap_clockify.tap:TapClockify.cli'
+
+[tool.black]
+line-length = 100
+target-version = ['py38']
