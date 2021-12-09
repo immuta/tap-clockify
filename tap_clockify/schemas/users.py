@@ -8,16 +8,22 @@ schema = th.PropertiesList(
     th.Property("activeWorkspace", th.StringType),
     th.Property("defaultWorkspace", th.StringType),
     th.Property("status", th.StringType),
-    th.Property("memberships", th.ArrayType(
-        th.ObjectType(
-            th.Property("userId", th.StringType),
-            th.Property("hourlyRate", th.ObjectType(
-                th.Property("amount", th.NumberType),
-                th.Property("currency", th.StringType),
-            )),
-            th.Property("targetId", th.StringType),
-            th.Property("membershipType", th.StringType),
-            th.Property("membershipStatus", th.StringType),
-        )),
+    th.Property(
+        "memberships",
+        th.ArrayType(
+            th.ObjectType(
+                th.Property("userId", th.StringType),
+                th.Property(
+                    "hourlyRate",
+                    th.ObjectType(
+                        th.Property("amount", th.NumberType),
+                        th.Property("currency", th.StringType),
+                    ),
+                ),
+                th.Property("targetId", th.StringType),
+                th.Property("membershipType", th.StringType),
+                th.Property("membershipStatus", th.StringType),
+            )
+        ),
     ),
 ).to_dict()

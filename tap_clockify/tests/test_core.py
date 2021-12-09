@@ -8,9 +8,7 @@ from singer_sdk.testing import get_standard_tap_tests
 from tap_clockify.tap import TapClockify
 
 SAMPLE_CONFIG = {
-    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime(
-        "%Y-%m-%dT%H:%M:%SZ"
-    ),
+    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     "api_key": os.environ["TAP_CLOCKIFY_API_KEY"],
     "workspace": os.environ["TAP_CLOCKIFY_WORKSPACE"],
 }

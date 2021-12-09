@@ -25,12 +25,8 @@ class ClockifyStream(RESTStream):
     @property
     def authenticator(self) -> APIKeyAuthenticator:
         return APIKeyAuthenticator.create_for_stream(
-            self,
-            key="x-api-key",
-            value=self.config["api_key"],
-            location="header"
+            self, key="x-api-key", value=self.config["api_key"], location="header"
         )
-
 
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any]
@@ -56,8 +52,6 @@ class ClockifyStream(RESTStream):
             params["page"] = next_page_token
         if self.replication_key:
             start_time = self.get_starting_timestamp(context)
-            start_time_fmt = (
-                start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
-            )
+            start_time_fmt = start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
             params["start"] = start_time_fmt
         return params
