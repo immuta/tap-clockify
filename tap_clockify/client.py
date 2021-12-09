@@ -4,6 +4,7 @@ import requests
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
 
+from singer_sdk.authenticators import APIKeyAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 
@@ -22,15 +23,10 @@ class ClockifyStream(RESTStream):
         return f'https://api.clockify.me/api/v1/workspaces/{self.config["workspace"]}'
 
     @property
-    def http_headers(self) -> dict:
-        """Return the http headers needed."""
-        headers = {
-            "Content-Type": "application/json",
-            "x-api-key": self.config["api_key"],
-        }
-        if "user_agent" in self.config:
-            headers["User-Agent"] = self.config.get("user_agent")
-        return headers
+    def authenticator(self) -> APIKeyAuthenticator:
+        return APIKeyAuthenticator.create_for_stream(
+            self, key="x-api-key", value=self.config["api_key"], location="header"
+        )
 
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any]
@@ -56,8 +52,6 @@ class ClockifyStream(RESTStream):
             params["page"] = next_page_token
         if self.replication_key:
             start_time = self.get_starting_timestamp(context)
-            start_time_fmt = (
-                start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
-            )
+            start_time_fmt = start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
             params["start"] = start_time_fmt
         return params
